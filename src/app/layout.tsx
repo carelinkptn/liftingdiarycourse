@@ -1,5 +1,13 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import {
+  ClerkProvider,
+  SignInButton,
+  SignUpButton,
+  SignedIn,
+  SignedOut,
+  UserButton,
+} from "@clerk/nextjs";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -23,12 +31,35 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        {children}
-      </body>
-    </html>
+    <ClerkProvider signInFallbackRedirectUrl="/" signUpFallbackRedirectUrl="/">
+      <html lang="en">
+        <body
+          className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+          suppressHydrationWarning
+        >
+          <header className="flex items-center justify-between px-6 py-4 border-b border-foreground/10">
+            <span className="text-lg font-bold tracking-tight">Lifting Diary</span>
+            <nav className="flex items-center gap-3">
+              <SignedOut>
+                <SignInButton mode="modal">
+                  <button className="px-6 py-3 text-base font-semibold rounded-lg bg-blue-500 text-white hover:bg-blue-600 transition-colors cursor-pointer">
+                    Sign In
+                  </button>
+                </SignInButton>
+                <SignUpButton mode="modal">
+                  <button className="px-6 py-3 text-base font-semibold rounded-lg bg-[tomato] text-white hover:bg-red-500 transition-colors cursor-pointer">
+                    Sign Up
+                  </button>
+                </SignUpButton>
+              </SignedOut>
+              <SignedIn>
+                <UserButton />
+              </SignedIn>
+            </nav>
+          </header>
+          {children}
+        </body>
+      </html>
+    </ClerkProvider>
   );
 }
